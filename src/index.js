@@ -32,21 +32,17 @@ class Board extends React.Component {
   }
 
   render() {
-    const items = []      
-    for(let i=0; i<9; i++) {
-      items.push(this.renderSquare(i));
-    }
     return (
-      <div>
-        <div className="board-row">
-          {items.slice(0, 3)}
-        </div>
-        <div className="board-row">
-          {items.slice(3, 6)}
-        </div>
-        <div className="board-row">
-          {items.slice(6, 9)}
-        </div>
+      <div className="board">
+        {[0, 1, 2].map(row => {
+          return(
+          <div className="board-row" key={row}>
+            {[0, 1, 2].map(col => {
+              return this.renderSquare((3*row)+col);
+            })}
+          </div>
+          )
+        })}
       </div>
     );
   }
@@ -72,12 +68,8 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
-    if(calculateWinner(squares) || squares[i]) {
-      this.setState({
-        victoryLine: calculateWinner(squares)
-      })
-      return;
-    }
+    if(calculateWinner(squares) || squares[i]) {return;}
+
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
       history: history.concat([{
@@ -85,6 +77,7 @@ class Game extends React.Component {
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
+      victoryLine: calculateWinner(squares)
     });
   }
 
@@ -94,6 +87,15 @@ class Game extends React.Component {
       xIsNext: (step % 2) === 0,
       victoryLine: []
     });
+  }
+
+  //move is the index in history
+  lastMovePosition(history, move) {
+    //Returns the row, column of the last move
+    //Index is the last index changed during this move
+    //A for loop would be more readable, but I wanted practice on array methods
+    let index = [0, 1, 2, 3, 4, 5, 6, 7, 8].findIndex(i => {return history[move].squares[i] !== history[move-1].squares[i]});
+    return([(Math.floor(index/3)+1), (index%3)+1]);
   }
 
   render() {
@@ -107,9 +109,12 @@ class Game extends React.Component {
 
     //creates a jsx element that is a dynamic list
     //need key value for dynamic lists
+
+    //step is a single squares array(9)
+    //move is the index in history
     const moves = history.map((step, move) => {
       const desc = move ?
-        'Go to move #' + move :
+        'Go to move #' + move + ": " + this.lastMovePosition(history, move):
         'Go to game start';
       return (
         <li key={move}>
@@ -138,7 +143,6 @@ class Game extends React.Component {
           <div>{status}</div>
           <ol id="moves">{moves}</ol>
         </div>
-        
       </div>
     );
   }
