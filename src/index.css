@@ -65,6 +65,8 @@ body {
   .individualGame{
     float: left;
     height: 250px;
+    width: 300px;
+    align-self: center;
     border: black solid 2px;
     margin: 5px;
     padding: 5px;
