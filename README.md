@@ -1,5 +1,3 @@
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
-
 This is the react tutorial found at: [React Tutorial](https://reactjs.org/tutorial/tutorial.html).
 
 I've added several things including:
